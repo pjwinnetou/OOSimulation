@@ -236,6 +236,9 @@ void drawPlot(bool isRHIC = true, bool isAngantyr = false,std::string cent_type=
   hbias_jetpt6080->SetLineColor(kBlue+1);
   hbias_chargept6080->SetLineColor(kBlue+1);
   hbias_chargejetpt6080->SetLineColor(kBlue+1);
+  hbias_jetpt6080->SetMarkerColor(kBlue+1);
+  hbias_chargept6080->SetMarkerColor(kBlue+1);
+  hbias_chargejetpt6080->SetMarkerColor(kBlue+1);
 
   TH1D* hbias_jetpt[10];
   TH1D* hbias_jetpt_charged[10];
@@ -667,6 +670,8 @@ void drawPlot(bool isRHIC = true, bool isAngantyr = false,std::string cent_type=
   drawText(Form("%s O+O  #sqrt{s_{NN}} = %s",simtxt.c_str(),colltxt.c_str()),0.38,0.85,1,18);
   c_cent->SaveAs(Form("plots/c_centrality_%s_%s_%s.pdf",simtype.c_str(),collen.c_str(),cent_type.c_str()));
 
+  //ncoll
+  double ncollxmax = (isRHIC) ? 100 : 200;
   TCanvas* c_ncollall= new TCanvas("c_ncollall","",4,45,550,520);
   c_ncollall->SetLeftMargin(0.13);
   c_ncollall->SetRightMargin(0.05);
@@ -690,6 +695,7 @@ void drawPlot(bool isRHIC = true, bool isAngantyr = false,std::string cent_type=
   hncollall->GetYaxis()->SetMaxDigits(3);
   hncollall->GetYaxis()->SetNoExponent(false);
   hncollall->GetXaxis()->CenterTitle();
+  hncollall->GetXaxis()->SetRangeUser(0,ncollxmax);
   hncollall->Draw();
 
   drawText(Form("Centrality calib. w/ %s (%.1f < |#eta| < %.1f)",cent_type_txt.c_str(),etalow_cent,etahigh_cent),xpos,ypos-3*ydiff,1,16);
@@ -744,6 +750,7 @@ void drawPlot(bool isRHIC = true, bool isAngantyr = false,std::string cent_type=
     hncoll[i]->GetYaxis()->SetMaxDigits(3);
     hncoll[i]->GetYaxis()->SetNoExponent(false);
     hncoll[i]->GetXaxis()->CenterTitle();
+    hncoll[i]->GetXaxis()->SetRangeUser(0,ncollxmax);
     hncoll[i]->Draw("hist same");
     lncoll->AddEntry(hncoll[i],Form("%d-%d%s",i*10,(i+1)*10,perc.c_str()),"l");
     
@@ -759,7 +766,9 @@ void drawPlot(bool isRHIC = true, bool isAngantyr = false,std::string cent_type=
     hbias_chargept[i]->SetMarkerColor(colorIdx[i]);
     hbias_chargejetpt[i]->SetLineWidth(2);
     hbias_chargejetpt[i]->SetLineColor(colorIdx[i]);
+    hbias_chargejetpt[i]->SetMarkerColor(colorIdx[i]);
     hbias_chargejetpt_charged[i]->SetLineColor(colorIdx[i]);
+    hbias_chargejetpt_charged[i]->SetMarkerColor(colorIdx[i]);
   }
 
   lncoll->Draw("same");
@@ -870,8 +879,10 @@ void drawPlot(bool isRHIC = true, bool isAngantyr = false,std::string cent_type=
   hdummy->GetXaxis()->SetTitle("p_{T}^{jet} [GeV]");
   hdummy->Draw();
 
-  for(int i=0; i<10; i++)
-    hbias_chargejetpt[i]->Draw("same");
+  for(int i=0; i<10; i++){
+    hbias_chargejetpt[i]->SetMarkerStyle(kFullCircle);
+    hbias_chargejetpt[i]->Draw("P same");
+  }
   
   drawText("Anti-k_{T} R=0.2, Full jet",xposicp,yposicp-ydifficp,1,15);
   drawText(Form("|#eta^{h^{#pm}}| < %.1f, %.f < p_{T}^{h^{#pm}} < %.f",hadronetacutForICP,hadronptlowForICP,hadronpthighForICP),xposicp,yposicp-2*ydifficp,1,15);
@@ -891,8 +902,10 @@ void drawPlot(bool isRHIC = true, bool isAngantyr = false,std::string cent_type=
   cbias_ICP_jet_charged->cd();
   hdummy->Draw();
 
-  for(int i=0; i<10; i++)
-    hbias_chargejetpt_charged[i]->Draw("same");
+  for(int i=0; i<10; i++){
+    hbias_chargejetpt_charged[i]->SetMarkerStyle(kFullCircle);
+    hbias_chargejetpt_charged[i]->Draw("P same");
+  }
   
   drawText("Anti-k_{T} R=0.2, Charged jet",xposicp,yposicp-ydifficp,1,15);
   drawText(Form("|#eta^{h^{#pm}}| < %.1f, %.f < p_{T}^{h^{#pm}} < %.f",hadronetacutForICP,hadronptlowForICP,hadronpthighForICP),xposicp,yposicp-2*ydifficp,1,15);
